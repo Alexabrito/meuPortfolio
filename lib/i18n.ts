@@ -48,6 +48,9 @@ const copy = {
       langAria: "Ler o site em inglês",
       themeLight: "Ativar modo claro",
       themeDark: "Ativar modo escuro",
+      menuOpen: "Abrir menu de navegação",
+      menuClose: "Fechar menu de navegação",
+      menuBackdrop: "Fechar menu",
     },
     hero: {
       kicker: "UX Design · Front-end",
@@ -68,7 +71,8 @@ const copy = {
       seeMore: "Veja mais",
       modalClose: "Fechar detalhe do projeto",
       modalCloseUi: "Fechar",
-      galleryLabel: "Mais imagens",
+      modalAboutLabel: "Sobre o projeto",
+      carouselNavAria: "Galeria de imagens do projeto",
     },
     projectsData: {
       idwall: {
@@ -133,7 +137,7 @@ const copy = {
       eyebrow: "Contato",
       title: "Vamos conversar",
       body:
-        "Se você tem um projeto em mente ou precisa elevar a experiência do seu produto, adoraria conversar. Respondo rápido e adoro discutir novas soluções.",
+        "Com formação em Design Digital e pós-graduação em UX Design em curso, somo 10 anos de atuação no mercado. Atuo de ponta a ponta na criação de interfaces, garantindo que o conceito inicial se transforme em um produto funcional e fiel ao projeto.\n\nEstou em constante reinvenção para garantir que cada projeto seja atual e eficiente. Se você busca uma parceria estratégica para o seu produto, vamos falar sobre como posso somar.",
       credit: "Feito com Next.js",
       socialLabel: "Redes",
       emailLabel: "E-mail",
@@ -148,7 +152,7 @@ const copy = {
       home: "Home",
       projects: "Work",
       stack: "Technologies",
-      statement: "Manifesto",
+      statement: "Philosophy",
       contact: "Contact",
     },
     header: {
@@ -156,6 +160,9 @@ const copy = {
       langAria: "Read the site in Portuguese",
       themeLight: "Switch to light mode",
       themeDark: "Switch to dark mode",
+      menuOpen: "Open navigation menu",
+      menuClose: "Close navigation menu",
+      menuBackdrop: "Close menu",
     },
     hero: {
       kicker: "UX Design · Front-end",
@@ -176,7 +183,8 @@ const copy = {
       seeMore: "See more",
       modalClose: "Close project details",
       modalCloseUi: "Close",
-      galleryLabel: "More frames",
+      modalAboutLabel: "About the project",
+      carouselNavAria: "Project image gallery",
     },
     projectsData: {
       idwall: {

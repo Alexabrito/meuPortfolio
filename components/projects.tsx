@@ -20,6 +20,7 @@ import {
   type ComponentType,
   type SVGProps,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 const ORDER: ProjectId[] = ['idwall', 'idsummit', 'cacau'];
 
@@ -83,6 +84,11 @@ function ProjectModal({
   const titleId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const [slide, setSlide] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open || !id) return;
@@ -118,20 +124,23 @@ function ProjectModal({
   const thumbCols =
     images.length <= 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2' : 'grid-cols-3';
 
-  return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 sm:p-6">
+  if (!mounted) return null;
+
+  return createPortal(
+    <>
       <button
         type="button"
         aria-label={t.projects.modalClose}
-        className="absolute inset-0 bg-fg/50 backdrop-blur-[10px] transition-opacity motion-reduce:backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-fg/50 backdrop-blur-[10px] transition-opacity motion-reduce:backdrop-blur-sm"
         onClick={onClose}
       />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        className="relative z-[91] max-h-[min(92vh,900px)] w-full max-w-5xl overflow-y-auto rounded-[1.75rem] border border-line bg-card shadow-2xl animate-modal-in motion-reduce:animate-none"
-      >
+      <div className="pointer-events-none fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          className="pointer-events-auto max-h-[min(92vh,900px)] w-full max-w-5xl overflow-y-auto rounded-[1.75rem] border border-line bg-card shadow-2xl animate-modal-in motion-reduce:animate-none"
+        >
         <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div className="relative border-b border-line lg:border-b-0 lg:border-r lg:border-line/80">
             <div
@@ -154,7 +163,7 @@ function ProjectModal({
               <div
                 className={`grid gap-1.5 p-3 sm:gap-2 sm:p-4 ${thumbCols}`}
                 role="tablist"
-                aria-label={t.projects.galleryLabel}
+                aria-label={t.projects.carouselNavAria}
               >
                 {images.map((src, i) => (
                   <button
@@ -190,7 +199,7 @@ function ProjectModal({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted">
-                  {t.projects.galleryLabel}
+                  {t.projects.modalAboutLabel}
                 </p>
                 <h2
                   id={titleId}
@@ -238,17 +247,26 @@ function ProjectModal({
               {tech.map(({ Icon, label }) => (
                 <span
                   key={label}
-                  className="flex h-11 w-11 items-center justify-center rounded-2xl border border-line text-muted transition-[color,border-color] duration-300 hover:border-accent/40 hover:text-accent"
+                  className="group relative flex h-11 w-11 items-center justify-center rounded-2xl border border-line text-muted transition-[color,border-color] duration-300 hover:border-accent/40 hover:text-accent"
                   title={label}
+                  aria-label={label}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5 shrink-0" aria-hidden />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-fg px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-bg opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none motion-reduce:group-hover:opacity-0 dark:bg-card dark:text-fg dark:ring-1 dark:ring-line"
+                  >
+                    {label}
+                  </span>
                 </span>
               ))}
             </div>
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>,
+    document.body,
   );
 }
 

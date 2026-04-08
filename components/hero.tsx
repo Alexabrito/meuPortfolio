@@ -30,8 +30,10 @@ export function Hero() {
         <h1 className="max-w-[min(100%,44rem)] text-balance font-sans text-[clamp(2.35rem,5.8vw,5rem)] font-semibold leading-[1.02] tracking-tight text-fg md:max-w-5xl lg:leading-[0.98]">
           <span className="hero-line block">{t.hero.line1}</span>
           <span className="hero-line hero-line-delay mt-1 block md:mt-0 md:inline">
-            <span className="text-accent">{t.hero.highlight}</span>
-            {t.hero.line2}
+            <span className="text-accent">
+              {t.hero.highlight}
+              {t.hero.line2}
+            </span>
           </span>
         </h1>
         <p className="mt-12 max-w-2xl text-pretty text-lg leading-relaxed text-muted md:mt-14 md:text-xl md:leading-relaxed lg:max-w-xl lg:text-[1.35rem] lg:leading-snug">
