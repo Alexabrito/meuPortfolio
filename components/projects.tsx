@@ -1,45 +1,24 @@
 'use client';
 
 import { useLocale } from '@/app/providers';
-import { type ProjectId, projectsMedia } from '@/lib/i18n';
-import {
-  IconCss,
-  IconFigma,
-  IconHtml,
-  IconNext,
-  IconReact,
-} from '@/components/tech-icons';
+import { CaseCover } from '@/components/case/case-cover';
+import { caseStudies, type CaseSlug, type CaseStudy, tx } from '@/lib/case-studies';
 import { useInView } from '@/lib/use-in-view';
-import Image from 'next/image';
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type ComponentType,
-  type SVGProps,
-} from 'react';
-import { createPortal } from 'react-dom';
+import Link from 'next/link';
+import { useCallback, useState } from 'react';
 
-const ORDER: ProjectId[] = ['idwall', 'idsummit', 'cacau'];
+/*
+ * Pares alternados 7/5 → 5/7 → 7/5 no grid de 12 colunas.
+ * As imagens de cada linha têm a mesma altura, então tudo alinha.
+ */
+const SLOTS = [
+  { wide: true, className: 'lg:col-span-7' },
+  { wide: false, className: 'lg:col-span-5' },
+  { wide: false, className: 'lg:col-span-5' },
+  { wide: true, className: 'lg:col-span-7' },
+];
 
-const techByProject: Record<
-  ProjectId,
-  { Icon: ComponentType<SVGProps<SVGSVGElement>>; label: string }[]
-> = {
-  idwall: [
-    { Icon: IconFigma, label: 'Figma' },
-    { Icon: IconNext, label: 'Next.js' },
-    { Icon: IconReact, label: 'React' },
-  ],
-  idsummit: [
-    { Icon: IconFigma, label: 'Figma' },
-    { Icon: IconCss, label: 'CSS' },
-    { Icon: IconHtml, label: 'HTML' },
-  ],
-  cacau: [{ Icon: IconFigma, label: 'Figma' }],
-};
+type Cursor = { x: number; y: number; on: boolean };
 
 function ProjectCursorLabel({
   label,
@@ -71,243 +50,97 @@ function ProjectCursorLabel({
   );
 }
 
-function ProjectModal({
-  id,
-  open,
-  onClose,
+function ProjectCard({
+  study,
+  className,
+  cursor,
+  onMove,
+  onLeave,
+  sizes,
+  compact = false,
 }: {
-  id: ProjectId | null;
-  open: boolean;
-  onClose: () => void;
+  study: CaseStudy;
+  compact?: boolean;
+  className: string;
+  cursor: Cursor;
+  onMove: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onLeave: () => void;
+  sizes: string;
 }) {
-  const { t } = useLocale();
-  const titleId = useId();
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const [slide, setSlide] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  const { t, locale } = useLocale();
+  const title = tx(study.title, locale);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  return (
+    <Link
+      href={`/projetos/${study.slug}`}
+      className={`group flex flex-col rounded-[1.75rem] border border-line bg-card p-2.5 text-left transition-[transform,border-color,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_32px_64px_-36px_rgba(37,99,235,0.35)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:hover:translate-y-0 dark:hover:shadow-[0_32px_64px_-36px_rgba(96,165,250,0.25)] ${className}`}
+    >
+      <span className="sr-only">
+        {title}. {t.projects.seeMore}
+      </span>
+      <div
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] bg-bg lg:aspect-auto lg:h-[420px]"
+      >
+        <CaseCover
+          study={study}
+          sizes={sizes}
+          compact={compact}
+          className="transition-transform duration-[900ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        />
+        <ProjectCursorLabel label={t.projects.seeMore} x={cursor.x} y={cursor.y} visible={cursor.on} />
+      </div>
 
-  useEffect(() => {
-    if (!open || !id) return;
-    setSlide(projectsMedia[id].coverIndex);
-  }, [open, id]);
-
-  useEffect(() => {
-    if (!open) return;
-    closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
-  if (!open || !id) return null;
-
-  const data = t.projectsData[id];
-  const media = projectsMedia[id];
-  const tech = techByProject[id];
-  const { images } = media;
-  const mainSrc = images[slide] ?? images[media.coverIndex] ?? '';
-  const thumbCols =
-    images.length <= 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-2' : 'grid-cols-3';
-
-  if (!mounted) return null;
-
-  return createPortal(
-    <>
-      <button
-        type="button"
-        aria-label={t.projects.modalClose}
-        className="fixed inset-0 z-40 bg-fg/50 backdrop-blur-[10px] transition-opacity motion-reduce:backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="pointer-events-none fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-          className="pointer-events-auto max-h-[min(92vh,900px)] w-full max-w-5xl overflow-y-auto rounded-[1.75rem] border border-line bg-card shadow-2xl animate-modal-in motion-reduce:animate-none"
-        >
-        <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-          <div className="relative border-b border-line lg:border-b-0 lg:border-r lg:border-line/80">
-            <div
-              className="relative aspect-[4/3] w-full overflow-hidden bg-line/30 lg:aspect-auto lg:min-h-[320px] lg:max-h-[48vh]"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              <Image
-                src={mainSrc}
-                alt=""
-                fill
-                className="object-cover transition-opacity duration-300 motion-reduce:transition-none"
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                unoptimized
-                priority
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-fg/50 via-transparent to-transparent opacity-80 lg:opacity-60" />
-            </div>
-            {images.length > 1 ? (
-              <div
-                className={`grid gap-1.5 p-3 sm:gap-2 sm:p-4 ${thumbCols}`}
-                role="tablist"
-                aria-label={t.projects.carouselNavAria}
-              >
-                {images.map((src, i) => (
-                  <button
-                    key={`${id}-carousel-${i}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={slide === i}
-                    aria-label={`${i + 1} / ${images.length}`}
-                    onClick={() => setSlide(i)}
-                    className={`relative aspect-[4/3] overflow-hidden rounded-xl bg-line/20 text-left ring-offset-2 ring-offset-card transition-[transform,box-shadow] duration-300 motion-reduce:transition-none ${
-                      slide === i
-                        ? 'z-[1] ring-2 ring-accent shadow-md'
-                        : 'ring-0 opacity-90 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
-                    }`}
-                  >
-                    <Image
-                      src={src}
-                      alt=""
-                      fill
-                      className={`object-cover transition-transform duration-500 motion-reduce:transition-none ${
-                        slide === i ? '' : 'hover:scale-[1.03] motion-reduce:hover:scale-100'
-                      }`}
-                      sizes="(min-width: 1024px) 16vw, 33vw"
-                      unoptimized
-                    />
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="flex flex-col gap-6 px-6 py-8 sm:px-8 sm:py-10 lg:py-12">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted">
-                  {t.projects.modalAboutLabel}
-                </p>
-                <h2
-                  id={titleId}
-                  className="mt-3 max-w-[20ch] text-balance font-sans text-3xl font-semibold leading-[1.05] tracking-tight text-fg sm:text-4xl"
-                >
-                  {data.title}
-                </h2>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {data.tags.map((tag) => (
-                    <li
-                      key={tag}
-                      className="rounded-full border border-line bg-bg px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-muted"
-                    >
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <button
-                ref={closeRef}
-                type="button"
-                onClick={onClose}
-                className="shrink-0 rounded-full border border-line px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-muted transition-colors hover:border-accent/40 hover:text-accent"
-              >
-                {t.projects.modalCloseUi}
-              </button>
-            </div>
-
-            <p className="max-w-prose text-base leading-relaxed text-muted sm:text-[17px]">
-              {data.description}
-            </p>
-
-            <a
-              href={data.linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-fg bg-fg px-6 py-3 font-mono text-[11px] font-medium uppercase tracking-wider text-bg transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] motion-reduce:transform-none"
-            >
-              {data.linkLabel}
-              <span aria-hidden>↗</span>
-            </a>
-
-            <div className="mt-auto flex flex-wrap items-center gap-3 border-t border-line/70 pt-6">
-              <span className="sr-only">Stack</span>
-              {tech.map(({ Icon, label }) => (
-                <span
-                  key={label}
-                  className="group relative flex h-11 w-11 items-center justify-center rounded-2xl border border-line text-muted transition-[color,border-color] duration-300 hover:border-accent/40 hover:text-accent"
-                  title={label}
-                  aria-label={label}
-                >
-                  <Icon className="h-5 w-5 shrink-0" aria-hidden />
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-fg px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-bg opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none motion-reduce:group-hover:opacity-0 dark:bg-card dark:text-fg dark:ring-1 dark:ring-line"
-                  >
-                    {label}
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
+      {/* Texto e ação dentro do mesmo card, com respiro e um rodapé separado */}
+      <div className="flex flex-1 flex-col px-4 pb-3 pt-7 sm:px-5">
+        <p className="text-sm text-muted">{tx(study.category, locale)}</p>
+        <h3 className="mt-2 font-sans text-xl font-semibold tracking-tight text-fg md:text-2xl">{title}</h3>
+        <p className="mb-8 mt-3 line-clamp-2 max-w-md text-[15px] leading-relaxed text-muted">{tx(study.short, locale)}</p>
+        <div className="mt-auto flex items-center justify-between border-t border-line pt-4">
+          <span className="text-sm font-medium text-fg">{t.projects.seeMore}</span>
+          <span
+            aria-hidden
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-fg transition-all duration-500 group-hover:-rotate-45 group-hover:border-fg group-hover:bg-fg group-hover:text-bg"
+          >
+            →
+          </span>
         </div>
       </div>
-      </div>
-    </>,
-    document.body,
+    </Link>
   );
 }
 
 export function Projects() {
   const { t } = useLocale();
   const { ref: headRef, visible: headVis } = useInView<HTMLElement>(0.15);
-  const [active, setActive] = useState<ProjectId | null>(null);
-  const [cursorById, setCursorById] = useState<
-    Record<ProjectId, { x: number; y: number; on: boolean }>
-  >(() =>
-    ORDER.reduce(
-      (acc, id) => {
-        acc[id] = { x: 50, y: 50, on: false };
-        return acc;
-      },
-      {} as Record<ProjectId, { x: number; y: number; on: boolean }>,
-    ),
-  );
+  const [cursorById, setCursorById] = useState<Record<string, Cursor>>({});
 
-  const updateCursor = useCallback(
-    (id: ProjectId, e: React.MouseEvent<HTMLButtonElement>) => {
-      const el = e.currentTarget;
-      const r = el.getBoundingClientRect();
-      setCursorById((prev) => ({
-        ...prev,
-        [id]: {
-          x: ((e.clientX - r.left) / r.width) * 100,
-          y: ((e.clientY - r.top) / r.height) * 100,
-          on: true,
-        },
-      }));
-    },
-    [],
-  );
-
-  const hideCursor = useCallback((id: ProjectId) => {
+  const updateCursor = useCallback((id: CaseSlug, e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
     setCursorById((prev) => ({
       ...prev,
-      [id]: { ...prev[id], on: false },
+      [id]: {
+        x: ((e.clientX - r.left) / r.width) * 100,
+        y: ((e.clientY - r.top) / r.height) * 100,
+        on: true,
+      },
     }));
   }, []);
+
+  const hideCursor = useCallback((id: CaseSlug) => {
+    setCursorById((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] ?? { x: 50, y: 50 }), on: false },
+    }));
+  }, []);
+
+  const cardProps = (study: CaseStudy) => ({
+    study,
+    cursor: cursorById[study.slug] ?? { x: 50, y: 50, on: false },
+    onMove: (e: React.MouseEvent<HTMLDivElement>) => updateCursor(study.slug, e),
+    onLeave: () => hideCursor(study.slug),
+  });
 
   return (
     <section
@@ -317,12 +150,6 @@ export function Projects() {
       <div
         className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.1] mix-blend-overlay dark:opacity-[0.06]"
         aria-hidden
-      />
-
-      <ProjectModal
-        id={active}
-        open={active !== null}
-        onClose={() => setActive(null)}
       />
 
       <div className="relative z-10 mx-auto max-w-6xl">
@@ -340,7 +167,7 @@ export function Projects() {
             </p>
             <h2 className="mt-4 font-sans text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[0.95] tracking-tight text-fg">
               <span className="block">{t.projects.titleLine1}</span>
-              <span className="mt-1 block text-muted/90">
+              <span className="mt-1 block text-accent">
                 {t.projects.titleLine2}
               </span>
               {t.projects.titleAccent ? (
@@ -355,75 +182,17 @@ export function Projects() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-12 lg:grid-rows-2 lg:gap-6">
-          {ORDER.map((id, index) => {
-            const data = t.projectsData[id];
-            const media = projectsMedia[id];
-            const c = cursorById[id];
-            const isFeatured = index === 0;
-
-            const gridClass = isFeatured
-              ? 'lg:col-span-7 lg:row-span-2 min-h-[min(68vh,520px)]'
-              : index === 1
-                ? 'lg:col-span-5 lg:col-start-8 lg:row-start-1 min-h-[240px] sm:min-h-[280px]'
-                : 'lg:col-span-5 lg:col-start-8 lg:row-start-2 min-h-[240px] sm:min-h-[280px]';
-
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+          {caseStudies.map((study, index) => {
+            const slot = SLOTS[index % SLOTS.length];
             return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActive(id)}
-                onMouseMove={(e) => updateCursor(id, e)}
-                onMouseLeave={() => hideCursor(id)}
-                className={`group relative w-full overflow-hidden rounded-[1.35rem] border border-line bg-card text-left shadow-sm ring-0 transition-[transform,box-shadow,border-color] duration-500 ease-out hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-[0_28px_64px_-28px_rgba(37,99,235,0.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none dark:hover:shadow-[0_28px_64px_-28px_rgba(96,165,250,0.22)] ${gridClass}`}
-              >
-                <span className="sr-only">
-                  {data.title}. {t.projects.seeMore}
-                </span>
-                <div className="absolute inset-0">
-                  <Image
-                    src={media.images[media.coverIndex]}
-                    alt=""
-                    fill
-                    className="object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                    sizes="(min-width: 1024px) 58vw, 100vw"
-                    unoptimized
-                  />
-                  <div
-                    className="absolute inset-0 bg-gradient-to-t from-fg/85 via-fg/35 to-fg/10 transition-opacity duration-500 group-hover:from-fg/90"
-                    style={{
-                      background:
-                        'linear-gradient(165deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.45) 45%, rgba(10,10,10,0.88) 100%)',
-                    }}
-                  />
-                </div>
-
-                <ProjectCursorLabel
-                  label={t.projects.seeMore}
-                  x={c.x}
-                  y={c.y}
-                  visible={c.on}
-                />
-
-                <div className="relative flex h-full min-h-[inherit] flex-col justify-end p-6 sm:p-8">
-                  <ul className="mb-4 flex flex-wrap gap-2">
-                    {data.tags.map((tag) => (
-                      <li
-                        key={tag}
-                        className="rounded-full border border-white/20 bg-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/90 backdrop-blur-sm"
-                      >
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                  <h3 className="max-w-[16ch] font-sans text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl lg:max-w-[20ch]">
-                    {data.title}
-                  </h3>
-                  <p className="mt-3 max-w-prose text-sm leading-relaxed text-white/75 line-clamp-3 sm:line-clamp-none sm:max-w-md">
-                    {data.short}
-                  </p>
-                </div>
-              </button>
+              <ProjectCard
+                key={study.slug}
+                {...cardProps(study)}
+                compact={!study.cover && !slot.wide}
+                className={slot.className}
+                sizes={slot.wide ? '(min-width: 1024px) 58vw, 100vw' : '(min-width: 1024px) 42vw, 100vw'}
+              />
             );
           })}
         </div>

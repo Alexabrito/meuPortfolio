@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme, useLocale } from "@/app/providers";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export function Header() {
@@ -10,15 +11,17 @@ export function Header() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
+  // Fora da home (páginas de case), as âncoras apontam de volta para "/".
+  const base = usePathname() === "/" ? "" : "/";
   const nav = useMemo(
     () => [
-      { href: "#inicio", label: t.nav.home },
-      { href: "#projetos", label: t.nav.projects },
-      { href: "#stack", label: t.nav.stack },
-      { href: "#manifesto", label: t.nav.statement },
+      { href: `${base}#inicio`, label: t.nav.home },
+      { href: `${base}#projetos`, label: t.nav.projects },
+      { href: `${base}#stack`, label: t.nav.stack },
+      { href: `${base}#manifesto`, label: t.nav.statement },
       { href: "#contato", label: t.nav.contact },
     ],
-    [t.nav],
+    [t.nav, base],
   );
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -74,7 +77,7 @@ export function Header() {
 
       <div className="relative z-[60] mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4 md:gap-6 md:px-10 md:py-5">
         <a
-          href="#inicio"
+          href={`${base}#inicio`}
           className="shrink-0 font-sans text-lg font-semibold tracking-tight text-fg transition-opacity hover:opacity-80"
           onClick={closeMenu}
         >

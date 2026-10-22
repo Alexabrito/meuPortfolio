@@ -53,11 +53,6 @@ function readStoredTheme(): Theme | null {
   return null;
 }
 
-function initialTheme(): Theme {
-  if (typeof document === "undefined") return "light";
-  return document.documentElement.classList.contains("dark") ? "dark" : "light";
-}
-
 function readStoredLocale(): Locale | null {
   if (typeof window === "undefined") return null;
   try {
@@ -116,7 +111,8 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(initialTheme);
+  // Começa igual ao HTML estático (light); o efeito abaixo aplica o tema salvo — evita mismatch de hidratação.
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     const stored = readStoredTheme();

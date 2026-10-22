@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 
 const EMAIL = "alexab.cruzz@gmail.com";
 
+/** E-mail sempre visível (link mailto) + botão de copiar com aviso para leitores de tela. */
 export function CopyEmailButton() {
   const { t } = useLocale();
   const [copied, setCopied] = useState(false);
@@ -20,27 +21,38 @@ export function CopyEmailButton() {
   }, []);
 
   return (
-    <button
-      type="button"
-      onClick={copy}
-      className="group inline-flex items-center gap-2 rounded-full border border-line bg-card px-5 py-2.5 font-mono text-sm text-fg transition-all duration-300 hover:border-accent hover:text-accent"
-    >
-      {copied ? (
-        <>
-          <CheckIcon className="h-4 w-4 text-accent" />
-          <span>{t.copyEmail.copied}</span>
-        </>
-      ) : (
-        <>
-          <MailIcon className="h-4 w-4 opacity-70 transition-opacity group-hover:opacity-100" />
-          <span>{t.copyEmail.copy}</span>
-        </>
-      )}
-    </button>
+    <div className="flex flex-col items-start gap-3">
+      <a
+        href={`mailto:${EMAIL}`}
+        className="whitespace-nowrap text-lg font-medium text-fg underline decoration-line underline-offset-4 transition-colors hover:text-accent hover:decoration-accent md:text-xl"
+      >
+        {EMAIL}
+      </a>
+      <button
+        type="button"
+        onClick={copy}
+        className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-card px-4 py-2 text-sm text-fg transition-all duration-300 hover:border-accent hover:text-accent"
+      >
+        {copied ? (
+          <>
+            <CheckIcon className="h-4 w-4 text-accent" />
+            <span>{t.copyEmail.copied}</span>
+          </>
+        ) : (
+          <>
+            <CopyIcon className="h-4 w-4 opacity-70 transition-opacity group-hover:opacity-100" />
+            <span>{t.copyEmail.copy}</span>
+          </>
+        )}
+      </button>
+      <span className="sr-only" role="status" aria-live="polite">
+        {copied ? t.copyEmail.copiedLive : ""}
+      </span>
+    </div>
   );
 }
 
-function MailIcon({ className }: { className?: string }) {
+function CopyIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -54,8 +66,8 @@ function MailIcon({ className }: { className?: string }) {
       strokeLinejoin="round"
       aria-hidden
     >
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-      <polyline points="22,6 12,13 2,6" />
+      <rect x="9" y="9" width="12" height="12" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
   );
 }

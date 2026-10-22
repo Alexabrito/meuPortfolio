@@ -1,5 +1,8 @@
 import type { Config } from "tailwindcss";
 
+const withAlpha = (v: string) =>
+  `color-mix(in srgb, var(${v}) calc(<alpha-value> * 100%), transparent)`;
+
 const config: Config = {
   darkMode: "class",
   content: [
@@ -9,13 +12,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // color-mix permite modificadores de opacidade (bg-accent/10) com cores em variável CSS.
       colors: {
-        bg: "var(--bg)",
-        fg: "var(--fg)",
-        muted: "var(--muted)",
-        accent: "var(--accent)",
-        card: "var(--card)",
-        line: "var(--line)",
+        bg: withAlpha("--bg"),
+        fg: withAlpha("--fg"),
+        muted: withAlpha("--muted"),
+        accent: withAlpha("--accent"),
+        card: withAlpha("--card"),
+        line: withAlpha("--line"),
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],

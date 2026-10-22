@@ -105,7 +105,7 @@ export function Footer() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-8 sm:flex-row sm:items-center lg:flex-col lg:items-stretch xl:flex-row xl:items-center">
+              <div className="flex flex-col gap-8 sm:flex-row sm:items-start lg:flex-col lg:items-stretch">
                 <nav aria-label="Social">
                   <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
                     {t.footer.socialLabel}
@@ -126,7 +126,7 @@ export function Footer() {
                     ))}
                   </ul>
                 </nav>
-                <div className="sm:border-l sm:border-line/80 sm:pl-8 lg:border-l-0 lg:pl-0 xl:border-l xl:pl-8">
+                <div className="sm:border-l sm:border-line/80 sm:pl-8 lg:border-l-0 lg:border-t lg:pl-0 lg:pt-8">
                   <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
                     {t.footer.emailLabel}
                   </p>

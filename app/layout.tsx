@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { caseFontVariables } from "@/lib/fonts";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -24,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${caseFontVariables}`}
       suppressHydrationWarning
     >
       <body className="bg-bg font-sans text-fg">

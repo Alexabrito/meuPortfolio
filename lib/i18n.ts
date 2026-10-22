@@ -2,38 +2,6 @@ export type Locale = "pt" | "en";
 
 export const STORAGE_LOCALE_KEY = "locale";
 
-export type ProjectId = "idwall" | "idsummit" | "cacau";
-
-/** `coverIndex` = imagem da capa no grid e slide inicial no modal. */
-export const projectsMedia: Record<
-  ProjectId,
-  { images: string[]; coverIndex: number }
-> = {
-  idwall: {
-    images: [
-      "/projects/idwall/mock01.png",
-      "/projects/idwall/mock02.png",
-      "/projects/idwall/mock03.png",
-    ],
-    coverIndex: 1,
-  },
-  idsummit: {
-    images: [
-      "/projects/idsummit/mock04.png",
-      "/projects/idsummit/mock05.png",
-      "/projects/idsummit/mock06.png",
-    ],
-    coverIndex: 0,
-  },
-  cacau: {
-    images: [
-      "/projects/cacau/mock07.png",
-      "/projects/cacau/mock08.png",
-    ],
-    coverIndex: 0,
-  },
-};
-
 const copy = {
   pt: {
     nav: {
@@ -68,61 +36,78 @@ const copy = {
       titleAccent: "",
       subtitle:
         "Uma seleção de soluções que unem pesquisa de usuário, design de interface e implementação técnica. Explore os detalhes de cada entrega.",
-      seeMore: "Veja mais",
-      modalClose: "Fechar detalhe do projeto",
-      modalCloseUi: "Fechar",
-      modalAboutLabel: "Sobre o projeto",
-      carouselNavAria: "Galeria de imagens do projeto",
+      seeMore: "Ver case",
     },
-    projectsData: {
-      idwall: {
-        title: "Site idwall",
-        short:
-          "Presença digital da referência em identidade na América Latina — clareza, confiança e ritmo visual.",
-        description:
-          "Trabalho focado na experiência do site da idwall: hierarquia para produto e ecossistema, navegação que sustenta narrativa B2B e consistência com a marca em cada bloco. O desafio foi traduzir complexidade de identidade digital em páginas legíveis, com CTA e jornadas que conversam com quem decide em empresa.",
-        tags: ["UX", "Web", "Marca"],
-        linkUrl: "https://idwall.co",
-        linkLabel: "Ver site da idwall",
+    caseStudy: {
+      back: "Projetos",
+      nextShort: "Próximo",
+      academicBadge: "Projeto acadêmico",
+      academicNote:
+        "Estudo conceitual desenvolvido em contexto acadêmico. Marca, pessoas e dados são fictícios.",
+      meta: {
+        context: "Contexto",
+        role: "Papel",
+        tools: "Ferramentas",
       },
-      idsummit: {
-        title: "idsummit",
-        short:
-          "Landing e experiência do evento — confiança, programação e convite à inscrição.",
-        description:
-          "O idsummit concentra conteúdo denso: datas, line-up, credibilidade e urgência de inscrição. A interface organiza essa carga em camadas — hero com promessa clara, blocos de speakers e programação escaneáveis, e reforço de mensagem institucional sem perder ritmo. Pensado para quem chega pelo link e precisa entender o evento em segundos.",
-        tags: ["UX", "Evento", "Landing"],
-        linkUrl: "https://idsummit.com.br/",
-        linkLabel: "Ver idsummit.com.br",
+      overviewTitle: "Visão geral",
+      problem: "O desafio",
+      approach: "Como foi resolvido",
+      outcome: "O que mudou",
+      processTitle: "Processo",
+      galleryTitle: "Telas",
+      dsEyebrow: "Design system",
+      dsTabsLabel: "Seções do design system",
+      dsNav: {
+        principles: "Princípios",
+        colors: "Cores",
+        typography: "Tipografia",
+        foundations: "Fundamentos",
+        components: "Componentes",
       },
-      cacau: {
-        title: "Proposta de layout — Cacau",
-        short:
-          "Estudo editorial e de interface publicado no Behance — ritmo, grid e identidade do projeto.",
-        description:
-          "Case de proposta de layout para Cacau: exploração de diagramação, hierarquia tipográfica e uso de espaço para contar a história do produto com personalidade. Foi um exercício de olhar editorial aplicado à interface — do conceito ao frame final, com atenção a detalhe e coerência visual.",
-        tags: ["UI", "Editorial", "Behance"],
-        linkUrl:
-          "https://www.behance.net/gallery/139749369/Proposta-de-Layuot-Cacau",
-        linkLabel: "Ver no Behance",
-      },
+      copyHint: "Clique para copiar o hex",
+      copied: "Copiado!",
+      contrast: "Contraste",
+      weights: "Pesos",
+      typeScale: "Escala tipográfica",
+      spacing: "Espaçamento",
+      radii: "Raios",
+      elevation: "Elevação",
+      grid: "Grid",
+      columns: "colunas",
+      gutter: "gutter",
+      margin: "margem",
+      container: "container",
+      componentsBodyClient:
+        "Componentes do projeto como foram desenhados, recriados aqui para serem usados ao vivo: passe o mouse, clique, use o teclado.",
+      componentsBodyAcademic:
+        "Componentes que definem a identidade do sistema, renderizados ao vivo com os próprios tokens.",
+      learningsTitle: "Aprendizados",
+      nextProject: "Próximo projeto",
+      closeImage: "Fechar imagem",
+      openImage: "Ampliar imagem",
     },
     tech: {
       eyebrow: "Ferramentas",
-      title: "Do protótipo ao deploy.",
+      title: "Da pesquisa ao deploy.",
       subtitle:
-        "Utilizo o Figma para arquitetar experiências e o ecossistema do React para dar vida a elas. Meu foco é criar sistemas escaláveis, acessíveis e fáceis de manter.",
-      blurbs: {
-        figma:
-          "Onde passo a maior parte do tempo: fluxos, componentes, prototipagem e alinhamento com stakeholders — é minha principal superfície de trabalho.",
-        react:
-          "Interfaces reativas, estados claros e componentes que sobrevivem a iteração.",
-        next: "Sites e produtos web com performance e estrutura sólida em produção.",
-        ts: "Tipagem que reduz ambiguidade entre design, API e implementação.",
-        tailwind:
-          "Ritmo rápido com tokens e utilitários — sem perder a hierarquia visual.",
-        git: "Histórico, revisão e deploy com rastreio do que entrou em cada release.",
-      },
+        "Do entendimento do problema ao código em produção: as ferramentas que uso em cada etapa do processo.",
+      groups: [
+        {
+          title: "Pesquisa e estratégia",
+          body: "Entender pessoas e contexto antes de desenhar qualquer tela.",
+          tools: ["Miro", "FigJam", "Maze", "Hotjar", "Google Analytics"],
+        },
+        {
+          title: "Design e prototipação",
+          body: "Fluxos, interfaces, protótipos navegáveis e design systems.",
+          tools: ["Figma", "Adobe Photoshop", "Adobe Illustrator", "Notion"],
+        },
+        {
+          title: "Desenvolvimento",
+          body: "Interfaces reais, acessíveis e fiéis ao que foi desenhado.",
+          tools: ["HTML e CSS", "React", "Next.js", "TypeScript", "Tailwind CSS", "Git"],
+        },
+      ],
     },
     statement: {
       eyebrow: "Filosofia de trabalho",
@@ -143,7 +128,8 @@ const copy = {
       emailLabel: "E-mail",
     },
     copyEmail: {
-      copy: "Copiar e-mail",
+      copy: "Clique para copiar o e-mail",
+      copiedLive: "E-mail copiado para a área de transferência",
       copied: "Copiado",
     },
   },
@@ -180,60 +166,78 @@ const copy = {
       titleAccent: "",
       subtitle:
         "A selection of work that blends user research, interface design, and technical implementation. Explore the details of each delivery.",
-      seeMore: "See more",
-      modalClose: "Close project details",
-      modalCloseUi: "Close",
-      modalAboutLabel: "About the project",
-      carouselNavAria: "Project image gallery",
+      seeMore: "View case",
     },
-    projectsData: {
-      idwall: {
-        title: "idwall website",
-        short:
-          "Digital presence for Latin America’s identity leader — clarity, trust, and visual rhythm.",
-        description:
-          "UX-focused work on idwall’s site: hierarchy for product and ecosystem, navigation that carries a B2B story, and brand consistency in every block. The challenge was translating the complexity of digital identity into readable pages, with CTAs and journeys that speak to enterprise decision-makers.",
-        tags: ["UX", "Web", "Brand"],
-        linkUrl: "https://idwall.co",
-        linkLabel: "Visit idwall.co",
+    caseStudy: {
+      back: "Projects",
+      nextShort: "Next",
+      academicBadge: "Academic project",
+      academicNote:
+        "A conceptual study developed in an academic setting. Brand, people, and data are fictional.",
+      meta: {
+        context: "Context",
+        role: "Role",
+        tools: "Tools",
       },
-      idsummit: {
-        title: "idsummit",
-        short:
-          "Event landing and experience — trust, schedule, and a clear path to register.",
-        description:
-          "idsummit packs dense content: dates, line-up, credibility, and registration urgency. The interface layers that load — a hero with a sharp promise, scannable speaker and agenda blocks, and institutional reinforcement without losing pace. Built for people who land from a link and need to get the event in seconds.",
-        tags: ["UX", "Event", "Landing"],
-        linkUrl: "https://idsummit.com.br/",
-        linkLabel: "Visit idsummit.com.br",
+      overviewTitle: "Overview",
+      problem: "The challenge",
+      approach: "How it was solved",
+      outcome: "What changed",
+      processTitle: "Process",
+      galleryTitle: "Screens",
+      dsEyebrow: "Design system",
+      dsTabsLabel: "Design system sections",
+      dsNav: {
+        principles: "Principles",
+        colors: "Colour",
+        typography: "Typography",
+        foundations: "Foundations",
+        components: "Components",
       },
-      cacau: {
-        title: "Layout proposal — Cacau",
-        short:
-          "Editorial and UI study on Behance — rhythm, grid, and project identity.",
-        description:
-          "A layout proposal for Cacau: exploring composition, typographic hierarchy, and whitespace to tell the product story with character. An editorial eye applied to the interface — from concept to final frames, with attention to detail and visual coherence.",
-        tags: ["UI", "Editorial", "Behance"],
-        linkUrl:
-          "https://www.behance.net/gallery/139749369/Proposta-de-Layuot-Cacau",
-        linkLabel: "View on Behance",
-      },
+      copyHint: "Click to copy the hex",
+      copied: "Copied!",
+      contrast: "Contrast",
+      weights: "Weights",
+      typeScale: "Type scale",
+      spacing: "Spacing",
+      radii: "Radii",
+      elevation: "Elevation",
+      grid: "Grid",
+      columns: "columns",
+      gutter: "gutter",
+      margin: "margin",
+      container: "container",
+      componentsBodyClient:
+        "The project’s components as they were designed, rebuilt here so you can use them live: hover, click, use the keyboard.",
+      componentsBodyAcademic:
+        "The components that define the system’s identity, rendered live with its own tokens.",
+      learningsTitle: "Learnings",
+      nextProject: "Next project",
+      closeImage: "Close image",
+      openImage: "Enlarge image",
     },
     tech: {
       eyebrow: "Toolkit",
-      title: "From prototype to deploy.",
+      title: "From research to deploy.",
       subtitle:
-        "I use Figma to architect experiences and the React ecosystem to bring them to life. My focus is scalable, accessible systems that are easy to maintain.",
-      blurbs: {
-        figma:
-          "Where I spend most of my time: flows, components, prototyping, and stakeholder alignment — my main workspace.",
-        react:
-          "Reactive UI, honest component states, and layouts that survive iteration.",
-        next: "Web products and sites with solid structure and performance in production.",
-        ts: "Types that reduce ambiguity between design, APIs, and implementation.",
-        tailwind: "Fast iteration with utilities and tokens — without losing hierarchy.",
-        git: "History, review, and deploy with a trace of what shipped when.",
-      },
+        "From understanding the problem to code in production: the tools I use at each step of the process.",
+      groups: [
+        {
+          title: "Research and strategy",
+          body: "Understanding people and context before designing any screen.",
+          tools: ["Miro", "FigJam", "Maze", "Hotjar", "Google Analytics"],
+        },
+        {
+          title: "Design and prototyping",
+          body: "Flows, interfaces, clickable prototypes, and design systems.",
+          tools: ["Figma", "Adobe Photoshop", "Adobe Illustrator", "Notion"],
+        },
+        {
+          title: "Development",
+          body: "Real, accessible interfaces that stay true to the design.",
+          tools: ["HTML and CSS", "React", "Next.js", "TypeScript", "Tailwind CSS", "Git"],
+        },
+      ],
     },
     statement: {
       eyebrow: "Work philosophy",
@@ -254,7 +258,8 @@ const copy = {
       emailLabel: "Email",
     },
     copyEmail: {
-      copy: "Copy email",
+      copy: "Click to copy the email",
+      copiedLive: "Email copied to clipboard",
       copied: "Copied",
     },
   },
