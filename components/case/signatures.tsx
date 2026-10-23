@@ -678,10 +678,8 @@ function AcalantoAppointment() {
         {booked ? pick('Consulta agendada', 'Visit booked') : pick(`Agendar às ${slot}`, `Book at ${slot}`)}
         {booked ? <Check /> : null}
       </button>
-      <p className="mt-3 text-center text-[14px]" style={{ color: 'var(--ds-muted)' }} aria-live="polite">
-        {booked
-          ? pick('Você receberá o link por SMS e e-mail.', 'You’ll get the link by SMS and email.')
-          : pick('Alvos de toque de 48px · contraste AA', '48px touch targets · AA contrast')}
+      <p className={booked ? 'mt-3 text-center text-[14px]' : 'sr-only'} style={{ color: 'var(--ds-muted)' }} aria-live="polite">
+        {booked ? pick('Você receberá o link por SMS e e-mail.', 'You’ll get the link by SMS and email.') : null}
       </p>
     </div>
   );
@@ -697,7 +695,7 @@ function AcalantoVitals() {
   return (
     <div className="grid gap-3 sm:grid-cols-3">
       {vitals.map((v) => (
-        <div key={v.k} className="rounded-[16px] bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(20,35,43,0.08)' }}>
+        <div key={v.k} className="rounded-[20px] bg-white p-4" style={{ boxShadow: '0 1px 3px rgba(20,35,43,0.08)' }}>
           <p className="text-[14px] font-medium" style={{ color: 'var(--ds-muted)' }}>
             {v.k}
           </p>
@@ -745,9 +743,9 @@ function FeiroProduct({ name, farm, km, price, hue }: { name: string; farm: stri
           {name}
         </h4>
         <div className="mt-4 flex items-center justify-between gap-3">
-          <p className="text-[18px] font-bold tabular-nums">
+          <p className="whitespace-nowrap text-[18px] font-bold tabular-nums">
             R$ {price.toFixed(2).replace('.', ',')}
-            <span className="text-[13px] font-normal" style={{ color: 'var(--ds-muted)' }}>
+            <span className="text-[14px] font-normal" style={{ color: 'var(--ds-muted)' }}>
               {' '}/ kg
             </span>
           </p>
@@ -760,7 +758,7 @@ function FeiroProduct({ name, farm, km, price, hue }: { name: string; farm: stri
               <button type="button" aria-label={pick('Remover um', 'Remove one')} onClick={() => setQty((q) => q - 1)} className="h-full w-9 text-[18px]">
                 −
               </button>
-              <span className="w-6 text-center text-[15px] font-bold tabular-nums" aria-live="polite">
+              <span className="w-6 text-center text-[16px] font-bold tabular-nums" aria-live="polite">
                 {qty}
               </span>
               <button type="button" aria-label={pick('Adicionar um', 'Add one')} onClick={() => setQty((q) => q + 1)} className="h-full w-9 text-[18px]">
@@ -779,7 +777,7 @@ function FeiroStory() {
   return (
     <div className="rounded-[18px] p-6 sm:p-8" style={{ background: 'var(--ds-secondary)', color: 'var(--ds-on-secondary)' }}>
       <p className="text-[11px] font-bold uppercase tracking-[1.5px] opacity-80">{pick('Quem produz', 'Who grows it')}</p>
-      <p className="mt-3 text-[clamp(26px,3.4vw,36px)] leading-[1.1]" style={{ fontFamily: 'var(--ds-heading)' }}>
+      <p className="mt-3 text-[34px] font-semibold leading-[1.15]" style={{ fontFamily: 'var(--ds-heading)' }}>
         {pick('“A gente colhe na terça para chegar na sua mesa na quarta.”', '“We harvest on Tuesday so it reaches your table on Wednesday.”')}
       </p>
       <p className="mt-4 text-[14px] opacity-80">Seu Joaquim · Sítio das Maritacas</p>
@@ -823,7 +821,7 @@ function MiranteKpis() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.8px]" style={{ color: 'var(--ds-muted)' }}>
             {k.k}
           </p>
-          <p className="mt-2 text-[28px] font-medium leading-none tabular-nums" style={{ fontFamily: 'var(--ds-mono)' }}>
+          <p className="mt-2 text-[36px] font-medium leading-none tabular-nums" style={{ fontFamily: 'var(--ds-mono)' }}>
             {k.v}
           </p>
           <p className="mt-2 text-[12px] font-medium" style={{ color: k.up || k.k === 'Churn' ? 'var(--ds-success)' : 'var(--ds-danger)' }}>
@@ -853,7 +851,7 @@ function MiranteChart() {
   return (
     <div className="rounded-[14px] p-5" style={{ background: 'var(--ds-surface)', boxShadow: 'inset 0 0 0 1px var(--ds-border)' }}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[16px] font-semibold">{pick('Sessões por plataforma (mil)', 'Sessions by platform (k)')}</p>
+        <p className="text-[20px] font-semibold">{pick('Sessões por plataforma (mil)', 'Sessions by platform (k)')}</p>
         <div className="flex flex-wrap gap-2">
           {series.map((s) => {
             const on = !hidden.includes(s.name);
@@ -886,7 +884,7 @@ function MiranteChart() {
                 />
               ))}
             </div>
-            <span className="mt-2 text-center text-[11px]" style={{ color: 'var(--ds-muted)', fontFamily: 'var(--ds-mono)' }}>
+            <span className="mt-2 text-center text-[11px] font-semibold uppercase tracking-[0.8px]" style={{ color: 'var(--ds-muted)' }}>
               {m}
             </span>
           </div>
@@ -921,7 +919,7 @@ function MiranteTable() {
               <td className="px-4 py-3" style={{ fontFamily: 'var(--ds-mono)', color: 'var(--ds-muted)' }}>
                 {r.id}
               </td>
-              <td className="px-4 py-3 font-medium">{r.name}</td>
+              <td className="px-4 py-3 text-[14px] font-medium">{r.name}</td>
               <td className="px-4 py-3 tabular-nums" style={{ fontFamily: 'var(--ds-mono)' }}>
                 {r.mrr}
               </td>
@@ -944,16 +942,213 @@ function MiranteTable() {
 
 /* ------------------------------------------------------------------ */
 
-/** Peça usada na capa gerada dos estudos acadêmicos. */
-export function CoverPreview({ slug }: { slug: CaseSlug }) {
+/* ------------------------------------------------------------------ */
+/* Capas dos estudos acadêmicos: uma cena diferente para cada produto   */
+/* (celular, página web, dashboard), desenhada num palco de 1200×800.   */
+/* ------------------------------------------------------------------ */
+
+function FloatingVital({ label, value, unit, tone, status }: { label: string; value: string; unit: string; tone: 'success' | 'warning'; status: string }) {
+  return (
+    <div className="w-[230px] rounded-[20px] bg-white p-5 shadow-[0_24px_48px_-20px_rgba(0,0,0,0.35)]">
+      <p className="text-[14px] font-medium" style={{ color: 'var(--ds-muted)' }}>
+        {label}
+      </p>
+      <p className="mt-1 text-[32px] font-bold leading-none tabular-nums">
+        {value} <span className="text-[14px] font-medium" style={{ color: 'var(--ds-muted)' }}>{unit}</span>
+      </p>
+      <span
+        className="mt-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[14px] font-semibold"
+        style={{ background: `color-mix(in srgb, var(--ds-${tone}) 14%, #fff)`, color: `var(--ds-${tone})` }}
+      >
+        {tone === 'success' ? <Check size={12} /> : <span aria-hidden>!</span>}
+        {status}
+      </span>
+    </div>
+  );
+}
+
+function AcalantoScene() {
   const pick = usePick();
+  return (
+    <div className="ds-scope relative h-full w-full">
+      <span className="absolute -left-40 -top-48 h-[620px] w-[620px] rounded-full bg-white/[0.08]" />
+      <span className="absolute -bottom-56 right-[-120px] h-[520px] w-[520px] rounded-full bg-white/[0.06]" />
+      <div className="absolute left-[400px] top-[60px] w-[400px] rounded-[56px] bg-[#0B2F30] p-3.5 shadow-[0_50px_90px_-30px_rgba(0,0,0,0.55)]">
+        <div className="relative h-[700px] overflow-hidden rounded-[44px] px-5 pt-14" style={{ background: 'var(--ds-canvas)' }}>
+          <span className="absolute left-1/2 top-3 h-6 w-28 -translate-x-1/2 rounded-full bg-[#0B2F30]" />
+          <p className="text-[16px]" style={{ color: 'var(--ds-muted)' }}>
+            {pick('Olá, Ana', 'Hi, Ana')}
+          </p>
+          <p className="mt-1 text-[24px] font-bold leading-tight">{pick('Agende sua consulta', 'Book your visit')}</p>
+          <div className="mt-5">
+            <AcalantoAppointment />
+          </div>
+        </div>
+      </div>
+      <div className="absolute left-[790px] top-[170px] rotate-[3deg]">
+        <FloatingVital label={pick('Pressão', 'Blood pressure')} value="120/80" unit="mmHg" tone="success" status={pick('Normal', 'Normal')} />
+      </div>
+      <div className="absolute left-[190px] top-[420px] -rotate-[3deg]">
+        <FloatingVital label={pick('Glicemia', 'Glucose')} value="132" unit="mg/dL" tone="warning" status={pick('Atenção', 'Watch')} />
+      </div>
+    </div>
+  );
+}
+
+const FEIRO_ICONS = {
+  search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',
+  bag: 'M5 8h14l-1 12H6zM9 8a3 3 0 0 1 6 0',
+  chevron: 'M9 6l6 6-6 6',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+  pin: 'M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11zM12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  heart: 'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 5.5-7 10-7 10z',
+};
+
+function FeiroIcon({ name, size = 20, stroke = 1.75 }: { name: keyof typeof FEIRO_ICONS; size?: number; stroke?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d={FEIRO_ICONS[name]} />
+    </svg>
+  );
+}
+
+/** Primeira dobra da home do Feirô, desenhada a 1440px (como no protótipo) e reduzida para caber na janela. */
+function FeiroScene() {
+  const pick = usePick();
+  const scale = 1040 / 1440;
+  const trust = [
+    { icon: 'clock' as const, t: pick('Colhido ontem', 'Picked yesterday'), s: pick('Entregue no dia seguinte', 'Delivered the next day') },
+    { icon: 'pin' as const, t: pick('Até 100 km', 'Within 100 km'), s: pick('De sítios da região', 'From local farms') },
+    { icon: 'heart' as const, t: pick('Preço justo', 'Fair price'), s: pick('80% vai ao produtor', '80% goes to the grower') },
+  ];
+  return (
+    <div className="ds-scope relative h-full w-full">
+      <div className="absolute left-[80px] top-[100px] h-[600px] w-[1040px] overflow-hidden rounded-[22px] shadow-[0_50px_90px_-36px_rgba(42,37,32,0.45)]" style={{ background: 'var(--ds-canvas)' }}>
+        <div className="flex h-11 items-center gap-2 border-b px-5" style={{ borderColor: 'var(--ds-border)', background: '#EFE8DC' }}>
+          <span className="h-3 w-3 rounded-full bg-[#D9CDBB]" />
+          <span className="h-3 w-3 rounded-full bg-[#D9CDBB]" />
+          <span className="h-3 w-3 rounded-full bg-[#D9CDBB]" />
+        </div>
+        <div className="flex h-[770px] w-[1440px] origin-top-left flex-col" style={{ transform: `scale(${scale})` }}>
+          <div className="flex h-10 shrink-0 items-center justify-center text-[11px] font-bold uppercase tracking-[1.5px]" style={{ background: 'var(--ds-secondary)', color: 'var(--ds-on-secondary)' }}>
+            {pick('Pedidos até 22h chegam amanhã  ·  Frete grátis acima de R$ 80', 'Order by 10pm, get it tomorrow  ·  Free delivery over R$ 80')}
+          </div>
+          <div className="flex h-20 shrink-0 items-center border-b px-[100px]" style={{ background: 'var(--ds-surface)', borderColor: 'var(--ds-border)' }}>
+            <span className="text-[34px] font-semibold leading-none" style={{ fontFamily: 'var(--ds-heading)', color: 'var(--ds-secondary)' }}>
+              Feirô
+            </span>
+            <span className="ml-16 flex gap-10 text-[14px] font-medium" style={{ color: 'var(--ds-muted)' }}>
+              <span>{pick('Hortifruti', 'Produce')}</span>
+              <span>{pick('Laticínios', 'Dairy')}</span>
+              <span>{pick('Padaria', 'Bakery')}</span>
+              <span>{pick('Produtores', 'Growers')}</span>
+              <span>{pick('Como funciona', 'How it works')}</span>
+            </span>
+            <span className="ml-auto flex h-11 w-[220px] items-center gap-2.5 rounded-[10px] border-[1.5px] px-3.5 text-[14px]" style={{ borderColor: 'var(--ds-border)', background: 'var(--ds-canvas)', color: 'var(--ds-muted)' }}>
+              <FeiroIcon name="search" />
+              {pick('Buscar alimentos', 'Search food')}
+            </span>
+            <span className="ml-6 text-[14px] font-medium">{pick('Entrar', 'Sign in')}</span>
+            <span className="ml-6 flex h-11 items-center gap-2 rounded-full pl-4 pr-3 text-[14px] font-bold" style={{ background: 'var(--ds-text)', color: 'var(--ds-surface)' }}>
+              <FeiroIcon name="bag" />
+              {pick('Sacola', 'Bag')}
+              <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full text-[11px]" style={{ background: 'var(--ds-primary)', color: 'var(--ds-on-primary)' }}>
+                3
+              </span>
+            </span>
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <p className="text-[11px] font-bold uppercase tracking-[1.5px]" style={{ color: 'var(--ds-success)' }}>
+              {pick('Colheita de terça · 21 de outubro', 'Tuesday harvest · October 21')}
+            </p>
+            <p className="mt-5 text-[52px] leading-[1.1]" style={{ fontFamily: 'var(--ds-heading)' }}>
+              {pick('Da feira para a sua mesa.', 'From market to table.')}
+            </p>
+            <p className="mt-4 max-w-[46ch] text-[16px] leading-relaxed" style={{ color: 'var(--ds-muted)' }}>
+              {pick('Alimentos de sítios a menos de 100 km, com o nome de quem plantou e colheita no dia anterior.', 'Food from farms under 100 km away, with the grower’s name and picked the day before.')}
+            </p>
+            <div className="mt-10 flex items-center gap-6">
+              <span className="ds-btn ds-btn--primary h-12 px-8 text-[16px]">{pick('Ver colheita da semana', 'See this week’s harvest')}</span>
+              <span className="flex items-center gap-1 text-[16px] font-bold">
+                {pick('Como funciona', 'How it works')}
+                <FeiroIcon name="chevron" stroke={2} />
+              </span>
+            </div>
+            <div className="mt-12 flex gap-16 border-t px-20 pt-8 text-left" style={{ borderColor: 'var(--ds-border)' }}>
+              {trust.map((it) => (
+                <div key={it.t} className="flex items-start gap-3">
+                  <span style={{ color: 'var(--ds-success)' }}>
+                    <FeiroIcon name={it.icon} size={24} stroke={1.5} />
+                  </span>
+                  <span className="text-[14px] leading-[1.45]">
+                    <span className="block font-bold">{it.t}</span>
+                    <span className="block" style={{ color: 'var(--ds-muted)' }}>
+                      {it.s}
+                    </span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiranteScene() {
+  const pick = usePick();
+  const nav = [pick('Visão geral', 'Overview'), pick('Receita', 'Revenue'), pick('Usuários', 'Users'), pick('Contas', 'Accounts'), pick('Relatórios', 'Reports')];
+  return (
+    <div className="ds-scope relative h-full w-full">
+      <span
+        className="absolute inset-0 opacity-40"
+        style={{
+          backgroundImage: 'linear-gradient(#273149 1px, transparent 1px), linear-gradient(90deg, #273149 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(70% 70% at 50% 50%, black, transparent)',
+        }}
+      />
+      <div className="absolute left-[190px] top-[110px] flex h-[580px] w-[820px] overflow-hidden rounded-[18px] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.8)]" style={{ background: 'var(--ds-canvas)', boxShadow: 'inset 0 0 0 1px var(--ds-border), 0 40px 90px -30px rgba(0,0,0,0.8)' }}>
+      <aside className="flex w-[170px] shrink-0 flex-col gap-1 border-r p-6" style={{ borderColor: 'var(--ds-border)', background: 'var(--ds-surface)' }}>
+        <span className="mb-8 flex items-center gap-2.5 text-[20px] font-semibold">
+          <span className="h-6 w-6 rounded-md" style={{ background: 'var(--ds-primary)' }} />
+          Mirante
+        </span>
+        {nav.map((n, i) => (
+          <span
+            key={n}
+            className="rounded-lg px-3 py-2.5 text-[14px]"
+            style={i === 0 ? { background: 'var(--ds-secondary)', color: 'var(--ds-text)' } : { color: 'var(--ds-muted)' }}
+          >
+            {n}
+          </span>
+        ))}
+      </aside>
+      <main className="min-w-0 flex-1 space-y-5 p-7">
+        <div className="flex items-center justify-between">
+          <p className="text-[28px] font-semibold">{pick('Visão geral', 'Overview')}</p>
+          <span className="rounded-md px-3 py-1.5 text-[12px] font-medium" style={{ background: 'var(--ds-secondary)', color: 'var(--ds-muted)' }}>
+            {pick('Últimos 6 meses', 'Last 6 months')}
+          </span>
+        </div>
+        <MiranteKpis />
+        <MiranteChart />
+      </main>
+      </div>
+    </div>
+  );
+}
+
+/** Conteúdo da capa gerada, por estudo. */
+export function CoverScene({ slug }: { slug: CaseSlug }) {
   switch (slug) {
     case 'acalanto':
-      return <AcalantoAppointment />;
+      return <AcalantoScene />;
     case 'feiro':
-      return <FeiroProduct name={pick('Tomate italiano', 'Roma tomato')} farm="Sítio das Maritacas" km={42} price={12.9} hue="#C8452D" />;
+      return <FeiroScene />;
     case 'mirante':
-      return <MiranteChart />;
+      return <MiranteScene />;
     default:
       return null;
   }
@@ -966,16 +1161,16 @@ export function SignatureComponents({ slug }: { slug: CaseSlug }) {
     case 'idwall':
       return (
         <div className="grid gap-5 lg:grid-cols-2">
-          <Specimen label={pick('Botões · estados do style guide', 'Buttons · style guide states')} className="lg:col-span-2">
+          <Specimen label={pick('Botões · estados do style guide', 'Buttons · style guide states')} width={560} className="lg:col-span-2">
             <IdwallButtons />
           </Specimen>
-          <Specimen label={pick('Navegação · menu com estado ativo', 'Navigation · menu with active state')} className="lg:col-span-2">
+          <Specimen label={pick('Navegação · menu com estado ativo', 'Navigation · menu with active state')} width={520} className="lg:col-span-2">
             <IdwallNav />
           </Specimen>
-          <Specimen label={pick('Formulário · vazio, erro e sucesso', 'Form · empty, error, and success')} surface="surface">
+          <Specimen label={pick('Formulário · vazio, erro e sucesso', 'Form · empty, error, and success')} width={440} surface="surface">
             <IdwallForm />
           </Specimen>
-          <Specimen label={pick('Accordion · abrir e fechar', 'Accordion · expand and collapse')} surface="surface">
+          <Specimen label={pick('Accordion · abrir e fechar', 'Accordion · expand and collapse')} width={400} surface="surface">
             <IdwallAccordion />
           </Specimen>
         </div>
@@ -983,13 +1178,13 @@ export function SignatureComponents({ slug }: { slug: CaseSlug }) {
     case 'idsummit':
       return (
         <div className="grid gap-5 lg:grid-cols-5">
-          <Specimen label={pick('Hero · selo de data vertical', 'Hero · vertical date stamp')} className="lg:col-span-5">
+          <Specimen label={pick('Hero · selo de data vertical', 'Hero · vertical date stamp')} width={600} className="lg:col-span-5">
             <SummitHero />
           </Specimen>
-          <Specimen label={pick('Programação · período e sessões', 'Schedule · period and sessions')} className="lg:col-span-3">
+          <Specimen label={pick('Programação · período e sessões', 'Schedule · period and sessions')} width={520} className="lg:col-span-3">
             <SummitAgenda />
           </Specimen>
-          <Specimen label={pick('Card de speaker', 'Speaker card')} className="lg:col-span-2" surface="surface">
+          <Specimen label={pick('Card de speaker', 'Speaker card')} width={320} className="lg:col-span-2" surface="surface">
             <div className="grid grid-cols-2 gap-3">
               <SummitSpeaker name={pick('Nome Sobrenome', 'Full Name')} role="Head of Cybersecurity" tint={0} />
               <SummitSpeaker name={pick('Nome Sobrenome', 'Full Name')} role="Product Owner" tint={20} />
@@ -1000,13 +1195,13 @@ export function SignatureComponents({ slug }: { slug: CaseSlug }) {
     case 'cacau':
       return (
         <div className="grid gap-5 md:grid-cols-3">
-          <Specimen label={pick('Medidor de limite', 'Limit gauge')}>
+          <Specimen label={pick('Medidor de limite', 'Limit gauge')} width={280}>
             <CacauGauge />
           </Specimen>
-          <Specimen label={pick('Seletor de data', 'Date picker')}>
+          <Specimen label={pick('Seletor de data', 'Date picker')} width={280}>
             <CacauCalendar />
           </Specimen>
-          <Specimen label={pick('Estado vazio', 'Empty state')}>
+          <Specimen label={pick('Estado vazio', 'Empty state')} width={280}>
             <CacauEmpty />
           </Specimen>
         </div>
@@ -1014,10 +1209,10 @@ export function SignatureComponents({ slug }: { slug: CaseSlug }) {
     case 'acalanto':
       return (
         <div className="grid gap-5 lg:grid-cols-5">
-          <Specimen label={pick('Agendamento · seleção de horário', 'Booking · time selection')} className="lg:col-span-2">
+          <Specimen label={pick('Agendamento · seleção de horário', 'Booking · time selection')} width={380} className="lg:col-span-2">
             <AcalantoAppointment />
           </Specimen>
-          <Specimen label={pick('Sinais vitais · cor + ícone + texto', 'Vitals · colour + icon + text')} className="lg:col-span-3">
+          <Specimen label={pick('Sinais vitais · cor + ícone + texto', 'Vitals · colour + icon + text')} width={540} className="lg:col-span-3">
             <AcalantoVitals />
           </Specimen>
         </div>
@@ -1025,13 +1220,13 @@ export function SignatureComponents({ slug }: { slug: CaseSlug }) {
     case 'feiro':
       return (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <Specimen label={pick('Card de produto · seletor de quantidade', 'Product card · quantity selector')}>
+          <Specimen label={pick('Card de produto · seletor de quantidade', 'Product card · quantity selector')} width={300}>
             <FeiroProduct name={pick('Tomate italiano', 'Roma tomato')} farm="Sítio das Maritacas" km={42} price={12.9} hue="#C8452D" />
           </Specimen>
-          <Specimen label={pick('Card de produto · outro conteúdo', 'Product card · different content')}>
+          <Specimen label={pick('Card de produto · outro conteúdo', 'Product card · different content')} width={300}>
             <FeiroProduct name={pick('Abóbora cabotiá', 'Kabocha squash')} farm="Chácara Pé de Serra" km={68} price={7.5} hue="#E3A93B" />
           </Specimen>
-          <Specimen label={pick('Bloco editorial', 'Editorial block')} className="md:col-span-2 lg:col-span-1">
+          <Specimen label={pick('Bloco editorial', 'Editorial block')} width={340} className="md:col-span-2 lg:col-span-1">
             <FeiroStory />
           </Specimen>
         </div>
@@ -1039,14 +1234,14 @@ export function SignatureComponents({ slug }: { slug: CaseSlug }) {
     case 'mirante':
       return (
         <div className="grid gap-5">
-          <Specimen label={pick('KPI tiles · números tabulares', 'KPI tiles · tabular figures')}>
+          <Specimen label={pick('KPI tiles · números tabulares', 'KPI tiles · tabular figures')} width={620}>
             <MiranteKpis />
           </Specimen>
           <div className="grid gap-5 lg:grid-cols-5">
-            <Specimen label={pick('Gráfico · legenda interativa', 'Chart · interactive legend')} className="lg:col-span-3">
+            <Specimen label={pick('Gráfico · legenda interativa', 'Chart · interactive legend')} width={480} className="lg:col-span-3">
               <MiranteChart />
             </Specimen>
-            <Specimen label={pick('Tabela · status', 'Table · status')} className="lg:col-span-2">
+            <Specimen label={pick('Tabela · status', 'Table · status')} width={440} className="lg:col-span-2">
               <MiranteTable />
             </Specimen>
           </div>

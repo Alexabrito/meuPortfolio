@@ -57,10 +57,8 @@ function ProjectCard({
   onMove,
   onLeave,
   sizes,
-  compact = false,
 }: {
   study: CaseStudy;
-  compact?: boolean;
   className: string;
   cursor: Cursor;
   onMove: (e: React.MouseEvent<HTMLDivElement>) => void;
@@ -86,7 +84,6 @@ function ProjectCard({
         <CaseCover
           study={study}
           sizes={sizes}
-          compact={compact}
           className="transition-transform duration-[900ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
         <ProjectCursorLabel label={t.projects.seeMore} x={cursor.x} y={cursor.y} visible={cursor.on} />
@@ -189,7 +186,6 @@ export function Projects() {
               <ProjectCard
                 key={study.slug}
                 {...cardProps(study)}
-                compact={!study.cover && !slot.wide}
                 className={slot.className}
                 sizes={slot.wide ? '(min-width: 1024px) 58vw, 100vw' : '(min-width: 1024px) 42vw, 100vw'}
               />

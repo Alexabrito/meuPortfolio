@@ -2,7 +2,7 @@
 
 import { useLocale } from '@/app/providers';
 import type { DsTheme } from '@/lib/case-studies';
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 /** Expõe os tokens do DS como variáveis CSS consumidas pelas classes `.ds-*`. */
 export function dsVars(t: DsTheme): CSSProperties {
@@ -34,17 +34,65 @@ export function usePick() {
   return (pt: string, en: string) => (locale === 'pt' ? pt : en);
 }
 
+/**
+ * “Prancheta”: o conteúdo é desenhado numa largura mínima fixa (`width`) e, quando o espaço
+ * é menor (ex.: celular), é reduzido por inteiro como uma imagem, em vez de se reorganizar e quebrar.
+ * Em telas maiores, ocupa a largura disponível normalmente. Continua interativo.
+ */
+export function Artboard({ width, children }: { width: number; children: ReactNode }) {
+  const outer = useRef<HTMLDivElement>(null);
+  const inner = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
+
+  useEffect(() => {
+    const o = outer.current;
+    const i = inner.current;
+    if (!o || !i) return;
+    const measure = () => setBox({ w: o.clientWidth, h: i.offsetHeight });
+    const ro = new ResizeObserver(measure);
+    ro.observe(o);
+    ro.observe(i);
+    measure();
+    return () => ro.disconnect();
+  }, []);
+
+  const scale = box.w && box.w < width ? box.w / width : 1;
+  const fits = box.w >= width;
+
+  return (
+    <div
+      ref={outer}
+      className={`relative w-full min-w-0 [contain:inline-size] ${fits ? '' : 'overflow-hidden'}`}
+      style={{ height: box.h && scale < 1 ? box.h * scale : undefined }}
+    >
+      <div
+        ref={inner}
+        style={{
+          width: fits ? '100%' : width,
+          transform: scale < 1 ? `scale(${scale})` : undefined,
+          transformOrigin: 'top left',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /** Moldura “canvas” de cada especime: fundo do DS, rótulo discreto no topo. */
 export function Specimen({
   label,
   children,
   className = '',
   surface = 'canvas',
+  width,
 }: {
   label: string;
   children: ReactNode;
   className?: string;
   surface?: 'canvas' | 'surface';
+  /** Largura de desenho do componente; abaixo dela, ele é reduzido como imagem. */
+  width?: number;
 }) {
   return (
     <figure
@@ -60,7 +108,7 @@ export function Specimen({
       >
         {label}
       </figcaption>
-      <div className="flex flex-1 flex-col justify-center p-5 sm:p-7">{children}</div>
+      <div className="flex flex-1 flex-col justify-center p-5 sm:p-7">{width ? <Artboard width={width}>{children}</Artboard> : children}</div>
     </figure>
   );
 }

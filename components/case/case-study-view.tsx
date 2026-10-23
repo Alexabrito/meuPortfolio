@@ -4,6 +4,7 @@ import { useLocale } from '@/app/providers';
 import {
   bestOn,
   caseStudies,
+  contrastRatio,
   type CaseStudy,
   type Swatch,
   type TypeStyle,
@@ -16,7 +17,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CaseCover } from './case-cover';
-import { dsVars } from './ds-kit';
+import { Artboard, dsVars } from './ds-kit';
 import { SignatureComponents } from './signatures';
 
 /* ------------------------------------------------------------------ */
@@ -159,14 +160,68 @@ function PanelHeading({ children, aside }: { children: ReactNode; aside?: ReactN
   );
 }
 
+/*
+ * Contraste conforme WCAG 2.2 (mesma fórmula do WebAIM Contrast Checker).
+ * Texto normal: AA ≥ 4,5:1, AAA ≥ 7:1. Texto grande (≥ 24px, ou ≥ 18,66px em negrito): AA ≥ 3:1, AAA ≥ 4,5:1.
+ * A razão é truncada (não arredondada) em 2 casas, para nunca aparentar um nível que a cor não atinge.
+ */
+function contrastLevels(ratio: number) {
+  return {
+    normal: ratio >= 7 ? 'AAA' : ratio >= 4.5 ? 'AA' : null,
+    large: ratio >= 4.5 ? 'AAA' : ratio >= 3 ? 'AA' : null,
+  };
+}
+
+function formatRatio(ratio: number, locale: string) {
+  const v = Math.floor(ratio * 100) / 100;
+  return `${v.toLocaleString(locale === 'pt' ? 'pt-BR' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}:1`;
+}
+
+function LevelChip({ label, level }: { label: string; level: string | null }) {
+  const { t } = useLocale();
+  return (
+    <span
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-md px-1.5 py-0.5 text-[11px] ${
+        level ? 'bg-fg/[0.06] text-fg' : 'text-muted line-through decoration-muted/60'
+      }`}
+    >
+      {label} {level ? `${level} ✓` : `${t.caseStudy.contrastFail} ✗`}
+    </span>
+  );
+}
+
+function ContrastRow({ hex, on, label }: { hex: string; on: '#FFFFFF' | '#000000'; label: string }) {
+  const { t, locale } = useLocale();
+  const ratio = contrastRatio(hex, on);
+  const lv = contrastLevels(ratio);
+  return (
+    <span className="block">
+      <span className="flex items-center gap-2">
+        <span
+          aria-hidden
+          className="flex h-6 w-7 shrink-0 items-center justify-center rounded-md text-[12px] font-semibold ring-1 ring-line"
+          style={{ background: hex, color: on }}
+        >
+          Aa
+        </span>
+        <span className="text-xs text-muted">{label}</span>
+        <span className="ml-auto font-mono text-xs font-semibold tabular-nums text-fg">{formatRatio(ratio, locale)}</span>
+      </span>
+      <span className="mt-1.5 flex flex-wrap gap-1">
+        <LevelChip label={t.caseStudy.contrastNormalShort} level={lv.normal} />
+        <LevelChip label={t.caseStudy.contrastLargeShort} level={lv.large} />
+      </span>
+    </span>
+  );
+}
+
 function SwatchCard({ swatch }: { swatch: Swatch }) {
   const { t, locale } = useLocale();
   const [copied, setCopied] = useState(false);
   const best = bestOn(swatch.hex);
-  const level = best.ratio >= 7 ? 'AAA' : best.ratio >= 4.5 ? 'AA' : best.ratio >= 3 ? 'AA Large' : '—';
 
   return (
-    <li>
+    <li className="flex flex-col overflow-hidden rounded-2xl border border-line bg-card">
       <button
         type="button"
         title={t.caseStudy.copyHint}
@@ -179,30 +234,23 @@ function SwatchCard({ swatch }: { swatch: Swatch }) {
             () => {},
           );
         }}
-        className="group block w-full overflow-hidden rounded-2xl border border-line bg-card text-left transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="flex h-24 items-end p-3 text-left font-mono text-[12px] font-semibold transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-accent"
+        style={{ background: swatch.hex, color: best.fg, boxShadow: 'inset 0 -1px 0 rgba(0,0,0,0.06)' }}
       >
-        <span
-          className="relative flex h-28 flex-col justify-between p-3 font-mono text-[11px]"
-          style={{ background: swatch.hex, color: best.fg, boxShadow: 'inset 0 -1px 0 rgba(0,0,0,0.06)' }}
-        >
-          <span
-            className="self-end whitespace-nowrap rounded-full px-2 py-0.5 text-[10px]"
-            title={`${t.caseStudy.contrast} ${best.ratio.toFixed(2)}:1`}
-            style={{ background: best.fg === '#FFFFFF' ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.08)' }}
-          >
-            {level} · {best.ratio.toFixed(1)}
-          </span>
-          <span className="font-semibold">{copied ? t.caseStudy.copied : swatch.hex.toUpperCase()}</span>
-        </span>
-        {/* Altura fixa: cards do mesmo conjunto sempre alinhados, independente do texto */}
-        <span className="flex h-[7.25rem] flex-col p-3.5">
-          <span className="block truncate text-sm font-semibold text-fg">{tx(swatch.name, locale)}</span>
-          <span className="mt-1 block truncate font-mono text-[10px] leading-snug text-accent" title={swatch.token}>
-            {swatch.token}
-          </span>
-          {swatch.usage ? <span className="mt-1.5 line-clamp-2 text-xs leading-snug text-muted">{tx(swatch.usage, locale)}</span> : null}
-        </span>
+        {copied ? t.caseStudy.copied : swatch.hex.toUpperCase()}
       </button>
+      {/* Alturas fixas: cards do mesmo conjunto sempre alinhados, independente do texto */}
+      <div className="flex h-[5.75rem] flex-col p-3.5 pb-2">
+        <span className="block truncate text-sm font-semibold text-fg">{tx(swatch.name, locale)}</span>
+        <span className="mt-1 block truncate font-mono text-[10px] leading-snug text-accent" title={swatch.token}>
+          {swatch.token}
+        </span>
+        {swatch.usage ? <span className="mt-1.5 line-clamp-2 text-xs leading-snug text-muted">{tx(swatch.usage, locale)}</span> : null}
+      </div>
+      <div className="space-y-3 border-t border-line p-3.5" aria-label={`${t.caseStudy.contrast} ${swatch.hex}`}>
+        <ContrastRow hex={swatch.hex} on="#FFFFFF" label={t.caseStudy.contrastOnWhite} />
+        <ContrastRow hex={swatch.hex} on="#000000" label={t.caseStudy.contrastOnBlack} />
+      </div>
     </li>
   );
 }
@@ -234,11 +282,12 @@ function TypeRow({ study, s }: { study: CaseStudy; s: TypeStyle }) {
           {s.tracking ? ` · ${s.tracking}px` : ''}
         </p>
       </div>
+      {/* Tamanho real em qualquer tela: a amostra não encolhe; o excesso é cortado com esmaecimento */}
       <p
-        className="min-w-0 overflow-hidden text-ellipsis text-fg"
+        className="min-w-0 overflow-hidden whitespace-nowrap text-fg [mask-image:linear-gradient(to_right,black_80%,transparent)] md:[mask-image:none] md:whitespace-normal"
         style={{
           fontFamily: typeFont(study, s),
-          fontSize: `clamp(${Math.min(s.size, 14)}px, ${(s.size / 12).toFixed(2)}vw, ${s.size}px)`,
+          fontSize: `${s.size}px`,
           lineHeight: s.lineHeight,
           fontWeight: s.weight,
           letterSpacing: s.tracking ? `${s.tracking}px` : undefined,
@@ -272,7 +321,7 @@ function ColorsPanel({ study }: { study: CaseStudy }) {
       {study.ds.colors.map((g) => (
         <div key={g.title.en}>
           <PanelHeading aside={<span className="text-xs text-muted">{t.caseStudy.copyHint}</span>}>{tx(g.title, locale)}</PanelHeading>
-          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {g.swatches.map((s) => (
               <SwatchCard key={s.token + s.hex} swatch={s} />
             ))}
@@ -337,9 +386,10 @@ function FoundationsPanel({ study }: { study: CaseStudy }) {
   const ds = study.ds;
 
   return (
-    <div className="grid gap-14 lg:grid-cols-2 lg:gap-12">
+    <div className="grid gap-14 lg:grid-cols-2 lg:gap-12 [&>*]:min-w-0">
       <div>
         <PanelHeading>{t.caseStudy.spacing}</PanelHeading>
+        <Artboard width={360}>
         <ul className="space-y-2.5">
           {ds.spacing.map((s, i) => (
             <li key={s.token} className="grid grid-cols-[88px_48px_1fr] items-center gap-3">
@@ -356,6 +406,7 @@ function FoundationsPanel({ study }: { study: CaseStudy }) {
             </li>
           ))}
         </ul>
+        </Artboard>
       </div>
 
       <div className="space-y-14">
@@ -471,6 +522,7 @@ function DsTabs({ study }: { study: CaseStudy }) {
 
   const select = (id: TabId, focus = false) => {
     setActive(id);
+    tabRefs.current[tabs.findIndex((x) => x.id === id)]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     if (focus) tabRefs.current[tabs.findIndex((x) => x.id === id)]?.focus();
     // Se a barra já está grudada no topo, volta para o início do conteúdo da aba.
     const top = anchorRef.current?.getBoundingClientRect().top ?? 0;
@@ -494,7 +546,7 @@ function DsTabs({ study }: { study: CaseStudy }) {
           role="tablist"
           aria-label={c.dsTabsLabel}
           onKeyDown={onKeyDown}
-          className="mx-auto flex max-w-6xl gap-6 overflow-x-auto [scrollbar-width:none] md:gap-9"
+          className="mx-auto flex max-w-6xl snap-x gap-6 overflow-x-auto pr-10 [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] md:gap-9 md:pr-0 md:[mask-image:none] [&::-webkit-scrollbar]:hidden"
         >
           {tabs.map((tab, i) => {
             const selected = tab.id === active;
@@ -511,7 +563,7 @@ function DsTabs({ study }: { study: CaseStudy }) {
                 aria-controls={`panel-${tab.id}`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => select(tab.id)}
-                className={`relative whitespace-nowrap py-4 text-[15px] transition-colors focus-visible:outline-none focus-visible:after:bg-accent ${
+                className={`relative shrink-0 snap-start whitespace-nowrap py-4 text-[15px] transition-colors focus-visible:outline-none focus-visible:after:bg-accent ${
                   selected ? 'font-medium text-fg' : 'text-muted hover:text-fg'
                 } after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:origin-left after:rounded-full after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)] ${
                   selected ? 'after:scale-x-100 after:bg-fg' : 'after:scale-x-0 after:bg-fg'

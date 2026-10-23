@@ -760,7 +760,29 @@ const acalanto: CaseStudy = {
   ],
   tags: [l("Design System", "Design System"), l("Acessibilidade", "Accessibility"), l("Saúde", "Health")],
   cover: null,
-  gallery: [],
+  gallery: [
+    {
+      src: "/projects/acalanto/telas-fluxo.png",
+      caption: l(
+        "Início, escolha de horário e confirmação do fluxo de agendamento.",
+        "Home, time selection and confirmation in the booking flow.",
+      ),
+    },
+    {
+      src: "/projects/acalanto/telas-especialidade-revisao.png",
+      caption: l(
+        "Escolha da especialidade e revisão dos dados antes de confirmar.",
+        "Choosing a specialty and reviewing the details before confirming.",
+      ),
+    },
+    {
+      src: "/projects/acalanto/detalhe-agendamento.png",
+      caption: l(
+        "Detalhe do card de agendamento, com o horário selecionado.",
+        "Close-up of the booking card with a time selected.",
+      ),
+    },
+  ],
   overview: {
     problem: l(
       "Pacientes de telemedicina incluem idosos, pessoas com baixa visão e usuários em momentos de estresse. O desafio: projetar um sistema em que a escolha acessível seja a escolha padrão para qualquer designer que o utilize.",
@@ -784,7 +806,7 @@ const acalanto: CaseStudy = {
     },
     {
       title: l("Fundamentos", "Foundations"),
-      body: l("Paleta validada em contraste AA, inclusive sobre os fundos de feedback, e escala tipográfica a partir de 18px.", "A palette validated for AA contrast, feedback tints included, and a type scale starting at 18px."),
+      body: l("Paleta validada em contraste AA, inclusive sobre os fundos de feedback, e texto base de 18px.", "A palette validated for AA contrast, feedback tints included, and an 18px base text size."),
     },
     {
       title: l("Componentes", "Components"),
@@ -792,7 +814,7 @@ const acalanto: CaseStudy = {
     },
     {
       title: l("Validação", "Validation"),
-      body: l("Teste de usabilidade moderado e revisão com leitor de tela.", "Moderated usability testing and a screen-reader review."),
+      body: l("Teste de usabilidade moderado.", "Moderated usability testing."),
     },
   ],
   ds: {
@@ -879,6 +901,7 @@ const acalanto: CaseStudy = {
       { token: "radius.sm", px: 8 },
       { token: "radius.md", px: 12 },
       { token: "radius.lg", px: 20 },
+      { token: "radius.full", px: 999 },
     ],
     elevation: [
       { token: "elevation.1", value: "0 1px 3px rgba(20,35,43,0.08), 0 1px 2px rgba(20,35,43,0.06)" },
@@ -935,7 +958,29 @@ const feiro: CaseStudy = {
   ],
   tags: [l("Design System", "Design System"), l("E-commerce", "E-commerce"), l("Editorial", "Editorial")],
   cover: null,
-  gallery: [],
+  gallery: [
+    {
+      src: "/projects/feiro/home.png",
+      caption: l(
+        "Home: colheita da semana em destaque e produtor identificado.",
+        "Home: the week's harvest up front, with the grower named.",
+      ),
+    },
+    {
+      src: "/projects/feiro/produto.png",
+      caption: l(
+        "Página de produto com procedência, quantidade e entrega.",
+        "Product page with origin, quantity and delivery details.",
+      ),
+    },
+    {
+      src: "/projects/feiro/sacola.png",
+      caption: l(
+        "Sacola agrupando itens de produtores diferentes, com resumo do pedido.",
+        "Bag grouping items from different growers, with an order summary.",
+      ),
+    },
+  ],
   overview: {
     problem: l(
       "Marketplaces de alimentos costumam parecer supermercados genéricos. A Feirô (marca fictícia) precisava transmitir procedência e cuidado artesanal sem sacrificar a eficiência de compra recorrente.",
@@ -944,11 +989,6 @@ const feiro: CaseStudy = {
     approach: l("A solução combinou uma serifa editorial (Fraunces) para contar histórias com uma sans neutra (DM Sans) para tudo que é transacional. Os componentes de compra (card de produto, seletor de quantidade, selo de origem) foram desenhados primeiro, e os fundamentos saíram deles.", "The solution paired an editorial serif (Fraunces) for storytelling with a neutral sans (DM Sans) for everything transactional. The shopping components (product card, quantity stepper, origin badge) were designed first, and the foundations came out of them."),
     outcome: l("Uma biblioteca de componentes com variantes, documentada no próprio Figma, e um protótipo de compra completo.", "A component library with variants, documented in Figma itself, and a complete shopping prototype."),
   },
-  metrics: [
-    { value: "2", label: l("famílias tipográficas com papéis definidos", "type families with defined roles") },
-    { value: "8", label: l("níveis na escala de espaçamento", "steps in the spacing scale") },
-    { value: "4.8:1", label: l("contraste do botão principal (AA)", "primary button contrast (AA)") },
-  ],
   process: [
     {
       title: l("Conceito", "Concept"),
@@ -1049,6 +1089,7 @@ const feiro: CaseStudy = {
       { token: "radius-sm", px: 4 },
       { token: "radius-md", px: 10 },
       { token: "radius-lg", px: 18 },
+      { token: "radius-pill", px: 999 },
     ],
     elevation: [
       { token: "shadow-soft", value: "0 10px 30px -14px rgba(42,37,32,0.25)" },
@@ -1124,11 +1165,6 @@ const mirante: CaseStudy = {
       "A coherent dark-theme dashboard kit, with semantic tokens ready for a light theme and design→code handoff without manual value translation.",
     ),
   },
-  metrics: [
-    { value: "6", label: l("cores categóricas da paleta Okabe-Ito", "categorical colours from the Okabe-Ito palette") },
-    { value: "4px", label: l("grid base para alinhar dados densos", "base grid to align dense data") },
-    { value: "3", label: l("níveis de superfície por luminância", "luminance-based surface levels") },
-  ],
   process: [
     {
       title: l("Auditoria", "Audit"),

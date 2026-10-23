@@ -190,7 +190,7 @@ html.dark .pointer-field {
     border: 1.5px solid transparent;
     border-radius: var(--ds-control-radius);
     font-family: var(--ds-font);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.01em;
     white-space: nowrap;
